@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://mp4tomp3-converter.github.io/sitemap-index.xml

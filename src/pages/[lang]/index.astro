@@ -1,0 +1,26 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import ConverterHero from '../../components/ConverterHero.astro';
+import BelowFoldSections from '../../components/BelowFoldSections.astro';
+import { locales, defaultLang, type SupportedLocale } from '../../i18n/ui';
+
+export function getStaticPaths() {
+  return locales
+    .filter((lang) => lang !== defaultLang)
+    .map((lang) => ({
+      params: { lang },
+      props: { lang },
+    }));
+}
+
+interface Props {
+  lang: SupportedLocale;
+}
+
+const { lang } = Astro.props;
+---
+
+<Layout lang={lang}>
+  <ConverterHero lang={lang} />
+  <BelowFoldSections lang={lang} />
+</Layout>

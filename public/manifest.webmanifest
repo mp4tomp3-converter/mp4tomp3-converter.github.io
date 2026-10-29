@@ -1,0 +1,32 @@
+{
+  "name": "MP4 to MP3 Converter Free — 100% Offline & Private (No Upload)",
+  "short_name": "MP4 to MP3",
+  "description": "Free MP4 to MP3 converter that works 100% offline in your browser with zero server uploads. Extract 128, 192, and 320 kbps MP3 audio privately.",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "orientation": "any",
+  "theme_color": "#A82020",
+  "background_color": "#F8E0A4",
+  "categories": ["multimedia", "music", "utilities", "productivity"],
+  "icons": [
+    {
+      "src": "/favicon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}

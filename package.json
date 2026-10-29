@@ -1,0 +1,26 @@
+{
+  "name": "mp4tomp3-converter",
+  "type": "module",
+  "version": "1.0.0",
+  "description": "100% Client-Side MP4 to MP3 Converter with Web Audio API & WebAssembly, 8-Language i18n, and Offline PWA Support",
+  "scripts": {
+    "dev": "astro dev",
+    "start": "astro dev",
+    "build": "astro build",
+    "preview": "astro preview",
+    "astro": "astro"
+  },
+  "dependencies": {
+    "@astrojs/sitemap": "^3.7.4",
+    "@breezystack/lamejs": "^1.2.7",
+    "@ffmpeg/ffmpeg": "^0.12.10",
+    "@ffmpeg/util": "^0.12.1",
+    "@tailwindcss/vite": "^4.1.0",
+    "astro": "^5.5.0",
+    "tailwindcss": "^4.1.0"
+  },
+  "devDependencies": {
+    "@types/node": "^22.0.0",
+    "typescript": "^5.8.0"
+  }
+}

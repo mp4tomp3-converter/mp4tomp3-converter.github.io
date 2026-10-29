@@ -1,0 +1,277 @@
+---
+import '../styles/global.css';
+import Header from '../components/Header.astro';
+import {
+  languages,
+  locales,
+  defaultLang,
+  useTranslations,
+  getLocalizedPath,
+  type SupportedLocale,
+} from '../i18n/ui';
+
+interface Props {
+  lang: SupportedLocale;
+}
+
+const { lang } = Astro.props;
+const t = useTranslations(lang);
+const siteUrl = 'https://mp4tomp3-converter.github.io';
+const canonicalUrl = new URL(getLocalizedPath(lang), siteUrl).toString();
+const ogImageUrl = `${siteUrl}/og-image.png`;
+const currentLangMeta = languages[lang];
+
+// 1. WebApplication JSON-LD Schema (Strictly NO fake ratings or fake reviews)
+const webAppSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'WebApplication',
+  name: t('meta.title'),
+  url: canonicalUrl,
+  image: ogImageUrl,
+  description: t('meta.description'),
+  inLanguage: lang,
+  applicationCategory: 'MultimediaApplication',
+  operatingSystem: 'All',
+  browserRequirements: 'Requires HTML5 / WebAudio / WebAssembly',
+  isAccessibleForFree: true,
+  offers: {
+    '@type': 'Offer',
+    price: '0',
+    priceCurrency: 'USD',
+  },
+};
+
+// 2. BreadcrumbList JSON-LD Schema dynamically matching current language path
+const breadcrumbItems =
+  lang === defaultLang
+    ? [
+        {
+          '@type': 'ListItem',
+          position: 1,
+          name: t('breadcrumb.home'),
+          item: `${siteUrl}/`,
+        },
+        {
+          '@type': 'ListItem',
+          position: 2,
+          name: t('breadcrumb.converter'),
+          item: canonicalUrl,
+        },
+      ]
+    : [
+        {
+          '@type': 'ListItem',
+          position: 1,
+          name: 'Home',
+          item: `${siteUrl}/`,
+        },
+        {
+          '@type': 'ListItem',
+          position: 2,
+          name: t('breadcrumb.converter'),
+          item: canonicalUrl,
+        },
+      ];
+
+const breadcrumbSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'BreadcrumbList',
+  itemListElement: breadcrumbItems,
+};
+
+// 3. FAQPage JSON-LD Schema dynamically populated from the 8-language FAQ array
+const faqEntries = [
+  { q: t('faq.q1'), a: t('faq.a1') },
+  { q: t('faq.q2'), a: t('faq.a2') },
+  { q: t('faq.q3'), a: t('faq.a3') },
+  { q: t('faq.q4'), a: t('faq.a4') },
+  { q: t('faq.q5'), a: t('faq.a5') },
+  { q: t('faq.q6'), a: t('faq.a6') },
+  { q: t('faq.q7'), a: t('faq.a7') },
+];
+
+const faqSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'FAQPage',
+  mainEntity: faqEntries.map((entry) => ({
+    '@type': 'Question',
+    name: entry.q,
+    acceptedAnswer: {
+      '@type': 'Answer',
+      text: entry.a,
+    },
+  })),
+};
+---
+
+<!doctype html>
+<html lang={lang} dir={currentLangMeta.dir}>
+  <head>
+    <!-- Google tag (gtag.js) -->
+    <script is:inline async src="https://www.googletagmanager.com/gtag/js?id=G-B81NG3TJC1"></script>
+    <script is:inline>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+
+      gtag('config', 'G-B81NG3TJC1');
+    </script>
+
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>{t('meta.title')}</title>
+    <meta name="description" content={t('meta.description')} />
+    <meta name="keywords" content={t('meta.keywords')} />
+    <meta
+      name="robots"
+      content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1"
+    />
+    <meta name="theme-color" content="#A82020" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+    <meta name="apple-mobile-web-app-title" content="MP4 to MP3" />
+
+    <!-- Icons & PWA Manifest -->
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="icon" type="image/png" sizes="192x192" href="/icon-192.png" />
+    <link rel="icon" type="image/png" sizes="512x512" href="/icon-512.png" />
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
+    <link rel="manifest" href="/manifest.webmanifest" />
+
+    <!-- Self-Referencing Canonical Tag -->
+    <link rel="canonical" href={canonicalUrl} />
+
+    <!-- Bidirectional Hreflang Matrix (8 locales + x-default) -->
+    {
+      locales.map((loc) => (
+        <link
+          rel="alternate"
+          hreflang={loc}
+          href={new URL(getLocalizedPath(loc), siteUrl).toString()}
+        />
+      ))
+    }
+    <link rel="alternate" hreflang="x-default" href={`${siteUrl}/`} />
+
+    <!-- Open Graph Metadata -->
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content={t('meta.title')} />
+    <meta property="og:description" content={t('meta.description')} />
+    <meta property="og:url" content={canonicalUrl} />
+    <meta property="og:site_name" content="MP4 to MP3 Converter" />
+    <meta property="og:locale" content={currentLangMeta.ogLocale} />
+    {
+      locales
+        .filter((loc) => loc !== lang)
+        .map((loc) => <meta property="og:locale:alternate" content={languages[loc].ogLocale} />)
+    }
+    <meta property="og:image" content={ogImageUrl} />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content={t('meta.title')} />
+
+    <!-- Twitter Card Metadata -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={t('meta.title')} />
+    <meta name="twitter:description" content={t('meta.description')} />
+    <meta name="twitter:image" content={ogImageUrl} />
+
+    <!-- JSON-LD Structured Data (WebApplication, BreadcrumbList, FAQPage) -->
+    <script type="application/ld+json" is:inline set:html={JSON.stringify(webAppSchema)} />
+    <script type="application/ld+json" is:inline set:html={JSON.stringify(breadcrumbSchema)} />
+    <script type="application/ld+json" is:inline set:html={JSON.stringify(faqSchema)} />
+
+    <!-- Prevent Flash of Incorrect Theme (Light Mode Default) -->
+    <script is:inline>
+      (function () {
+        try {
+          const saved = localStorage.getItem('theme');
+          if (saved === 'dark') {
+            document.documentElement.classList.add('dark');
+            document.documentElement.setAttribute('data-theme', 'dark');
+          } else {
+            document.documentElement.classList.remove('dark');
+            document.documentElement.setAttribute('data-theme', 'light');
+          }
+        } catch (e) {}
+      })();
+    </script>
+  </head>
+  <body
+    class="min-h-dvh antialiased"
+    data-toast-ready={t('pwa.toastReady')}
+    data-toast-installed={t('pwa.toastInstalled')}
+  >
+    <Header lang={lang} />
+    <main id="main-content">
+      <slot />
+    </main>
+
+    <!-- Accessible Offline / PWA Status Toast -->
+    <div
+      id="pwa-offline-toast"
+      role="status"
+      aria-live="polite"
+      class="pointer-events-none fixed bottom-4 right-4 z-50 hidden max-w-sm items-center gap-3 rounded-2xl border-2 px-4 py-3 text-sm font-extrabold shadow-2xl transition-all duration-300"
+      style="background-color: var(--workspace-box-bg); border-color: #31AAA9; color: var(--text-primary);"
+    >
+      <span
+        class="inline-block h-3 w-3 shrink-0 rounded-full"
+        style="background-color: #31AAA9;"
+        aria-hidden="true"
+      ></span>
+      <span id="pwa-offline-toast-text">{t('pwa.toastReady')}</span>
+    </div>
+
+    <!-- Offline Service Worker Registration & Bundle Caching -->
+    <script is:inline>
+      if ('serviceWorker' in navigator) {
+        window.addEventListener('load', function () {
+          navigator.serviceWorker
+            .register('/sw.js', { scope: '/' })
+            .then(function (registration) {
+              const sendAssetsToCache = function (sw) {
+                if (!sw) return;
+                const assetUrls = [];
+                document.querySelectorAll('script[src], link[rel="stylesheet"][href]').forEach(function (el) {
+                  const raw = el.getAttribute('src') || el.getAttribute('href');
+                  if (raw && (raw.startsWith('/') || raw.startsWith(window.location.origin))) {
+                    assetUrls.push(new URL(raw, window.location.origin).pathname);
+                  }
+                });
+                if (assetUrls.length > 0) {
+                  sw.postMessage({ type: 'CACHE_ASSETS', urls: assetUrls });
+                }
+              };
+
+              if (registration.active) {
+                sendAssetsToCache(registration.active);
+              }
+
+              registration.addEventListener('updatefound', function () {
+                const installing = registration.installing;
+                if (!installing) return;
+                installing.addEventListener('statechange', function () {
+                  if (installing.state === 'installed') {
+                    sendAssetsToCache(registration.active || installing);
+                    if (!navigator.serviceWorker.controller) {
+                      const toast = document.getElementById('pwa-offline-toast');
+                      if (toast) {
+                        toast.classList.remove('hidden');
+                        toast.classList.add('flex');
+                        setTimeout(function () {
+                          toast.classList.add('hidden');
+                          toast.classList.remove('flex');
+                        }, 4500);
+                      }
+                    }
+                  }
+                });
+              });
+            })
+            .catch(function () {});
+        });
+      }
+    </script>
+  </body>
+</html>
